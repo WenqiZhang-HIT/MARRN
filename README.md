@@ -5,10 +5,6 @@
 Core implementation accompanying *Beyond Missingness-Induced Deviations:
 Anomaly Detection via Missing-Aware Relational Reconstruction in Cyber-Physical Systems*.
 
-This repository extracts the architecture, complementary learning objective,
-and observed-residual scoring of the selected V13 model. It is a model-only
-release, **not a complete reproduction pipeline for the reported metrics**.
-
 ## Included
 
 - Availability-conditioned, fully connected directed graph attention with self-loops.
@@ -17,11 +13,7 @@ release, **not a complete reproduction pipeline for the reported metrics**.
 - Separately normalized visible/hidden MSE, batch-wise free bits, normalized KL and warm-up.
 - Maximum observed sensor-level MSE as a continuous anomaly score.
 
-Dataset loading, standardization, window generation, evaluation splits, model
-selection, thresholds, postprocessing, metric computation and checkpoints are
-intentionally excluded. No dataset-specific threshold is embedded in the model.
-
-## Defaults from the selected V13 configuration
+## Default value example: SWaT dataset configuration
 
 | Setting | Default |
 |---|---|
@@ -48,8 +40,7 @@ are computed automatically. Keep the same sensor order during training and infer
 
 ## Interface
 
-Inputs are already standardized float tensors `[batch, window, sensor]`; the
-legacy `[batch, window, sensor, 1]` interface is also accepted. Masks are binary
+Inputs are already standardized float tensors `[batch, window, sensor]`. Masks are binary
 with **1 = observed**. A real measurement of zero is valid. The model applies the
 mask internally, using zero placeholders rather than estimating missing inputs.
 Observed entries must be finite. Masks, values and model must share a device.
@@ -90,32 +81,9 @@ Original runs used automatic mixed precision. If adding AMP, unscale gradients
 before clipping. Checkpoint selection and validation scheduling are intentionally
 outside this model-only API.
 
-## Implementation fidelity and scope
-
-- Parameter names match the selected legacy backbone (`gat_layers`, `fc_mu`,
-  `fc_logvar`, `decoder`). Matching-shape legacy model state dictionaries can be
-  loaded directly. State tensors, not random initialization sequences, define
-  checkpoint equivalence.
-- Decoder coordinates preserve the legacy **sensor-major output then transpose**.
-- Training samples latent variables; evaluation decodes the posterior mean.
-- Edge reliability is a learned attention feature, not a hard gate or a measured
-  probability of physical dependency. Zero reliability does not delete an edge.
-- The artificial masking distribution matches the original sampler; this release
-  uses PyTorch RNG instead of NumPy and does not reproduce identical mask draws
-  from the same numeric seed.
-- Sensor MSE uses observed entries only. Entirely unobserved sensors do not supply
-  residual evidence. An all-missing window has a zero-score convention, not a
-  certified normal decision.
-- No posterior KL score or two-dimensional alarm rule is part of the V13 scorer.
-- The original selected model used normal-data fitting and labeled validation
-  selection. Removing that pipeline does not make the original experiment fully
-  label-free or reproduce its final F1.
-
 ## Dependencies and release status
 
-Install PyTorch for your compute platform, then PyTorch Geometric. The original
-training environment recorded PyTorch 2.8.0+cu128 on an RTX 5080. This release
+Install PyTorch for your compute platform, then PyTorch Geometric. This release
 does not require CUDA for use. Exact GPU determinism across versions is not promised.
 
-A license is deliberately not chosen on the authors' behalf. Add an appropriate
-LICENSE before describing the public repository as licensed open-source software.
+A license is deliberately not chosen on the authors' behalf.
