@@ -1,0 +1,26 @@
+{
+  "source_configuration": "V13 selected flatten_edge_relational backbone and observed top1 score",
+  "source_archives": {
+    "SWaT_V9_Relational_Masked_Training_NoData.zip": "51de4bef13e5e0a38949968b9275c96e63a16a973d88c848457415b7462480db",
+    "SWaT_V13_V10_TopK_PointWindow_Metrics_NoData.zip": "71b38fc3ffe55cfca87536c670cb553e3ea6be44a33ad2d8e5ee268bd8b8cd4c"
+  },
+  "checks": {
+    "legacy_state_dict": "strict load passed",
+    "legacy_evaluation": "exact equality",
+    "legacy_training_forward": "exact equality with matched RNG",
+    "legacy_loss": "exact equality",
+    "edge_attention_gradient": "nonzero",
+    "sensor_dimensions": [
+      1,
+      43,
+      51,
+      123
+    ]
+  },
+  "verification_environment": {
+    "torch": "2.3.0+cpu",
+    "torch_geometric": "2.6.1",
+    "device": "CPU"
+  },
+  "scope": "Core code equivalence only; no retraining or end-to-end metric reproduction."
+}
